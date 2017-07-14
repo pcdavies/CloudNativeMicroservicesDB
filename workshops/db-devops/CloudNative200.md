@@ -485,32 +485,11 @@ In the previous steps we updated the status of the Tasks assign to Roland Dubois
 
     ![](images/200/image046.png)
 
-- Select New Driver Definition
-
-    ![](images/200/14.PNG)
-
-- Select MySQL JDBC Driver, version 5.1, then select the JAR tab.
-
-    ![](images/200/image048.png)
-
-- Clear the existing Jar file.
-
-    ![](images/200/image049.png)
-
-- Add Jar/Zip file.
-
-    ![](images/200/image050.png)
-
-- Navigate to oracle/mysql-connector-java-5.1.41 and select the .jar file.
-
-    ![](images/200/image051.png)
-
-- Select Properties and update the values as follows:
-    - **Connection URL:** `jdbc:mysql:<your MySQL IP>:1521/AlphaofficeDB_Dev`
-    - **Database Name:** `AlphaofficeDB_Dev`
-    - **Driver Class:** `leave existing values`
+- Select Properties and update the values as follows.  
+    - **Database:** `AlphaofficeDB_Dev`
+    - **URL:** `jdbc:mysql:<your MySQL IP>:1521/AlphaofficeDB_Dev`
+    - **User Name:** `root`
     - **Password:** `<your assigned MySQL password>`
-    - **User ID:** `root`
 
     ![](images/200/image052.png)
 
