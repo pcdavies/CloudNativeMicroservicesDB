@@ -133,7 +133,7 @@ Oracle Developer Cloud Service provides a complete development platform that str
 
 In this step you are still connected in the logical role of the Project Manager, ***Lisa Jones***.
 
-- Click **Issues** on left hand navigation panel to display the Track Issues page.
+- Click **Issues** on left hand navigation panel to display the Track Issues page.  Note you may see some older screen shots that say Twitterfeed Marketing Project - this is actually our Alphaoffice Marketing Project.
 
     ![](images/100/Picture100-16.png)
 

@@ -72,7 +72,7 @@ Oracle Developer Cloud Service provides a complete development platform that str
 
 ### **STEP 3**: Review Agile Board
 
-- Click **Twitter Feed Marketing Project** to access the project.
+- Click **Alphaoffice Marketing Project** to access the project.
 
     ![](images/200/image011.png)
 
@@ -223,7 +223,7 @@ We will now create a MySQL Database using the Cloud Console.  But we will need t
   - **MySQL Configuration**
     - **Usable Database Storage (GB):**  `25` (default)
     - **Administration Username:**  `root` (default)
-    - **Password:**  `Alpha2014_`
+    - **Password:**  `<your assigned password>`
     - **Database Schema Name:**  `AlphaofficeDB`
     - **Server Character Set:** `utf8mb3 - UTF-8 Unicode` (default)
     - **Configure MySQL Enterprise Monitor:**  `No` (default)
@@ -265,7 +265,7 @@ Currently traffic is blocked on 3306 to Developer Cloud Service so we need to sw
 
     ![](images/200/image031.1.9.png)
 
-- Using the terminal you opened to create the keys, run the following.  If you closed the terminal, open a new one and cd into the keys directory. 
+- Using the terminal you opened to create the keys, run the following.  If you closed the terminal, open a new one and cd into the keys directory. ***Note:  The mysql product directory may have changed so take note when running the `ls` command below and modify the value accordingly (ie: mysql-5.7.18 may now be mysql-5.7.19 - that is why we list the directory first to confirm the version is correct)***.
 
     (Remember to use the public IP of your MySQL instance in the **ssh** command below.)
 
@@ -290,17 +290,15 @@ ssh -i labkey opc@129.144.152.131
 ********************************************************************************
 
 sudo su
-
-[root@alphaofficedb-mysql-1 opc]# echo 'port=1521'>>/u01/bin/mysql-5.7.17/my.cnf
-
-/etc/init.d/mysqlcsoper stop 
-
-/etc/init.d/mysqlcsoper start
-
+cd /u01/bin
+ls
+[root@alphaofficedb-mysql-1 opc]# echo 'port=1521'>>/u01/bin/mysql-5.7.18/my.cnf
+/etc/init.d/mysqlcsopr stop 
+/etc/init.d/mysqlcsopr start
 exit
-
 exit
 ```
+    ![](images/200/image031.1.9.1.png)
 
 ### **STEP 7**: Instantiate data to Version 1
 
@@ -330,12 +328,12 @@ We now have an empty database.  We need to populate it with baseline data.  We w
 
 - Create a new job with the following specifications for each tab identified below:
     - **Main:**
-      - **Name:** `Apply Alphaoffice Database Versions`
-      - **Description:** `Apply Flyway database updates`
+      - **Name:** `Create and Update Alphaoffice Databases`
+      - **Description:** `initialize Alpha office databases, create flyway versioning control, and apply database updates`
       - **JDK:** 'JDK 8'
     - **Build Parameters:**   ( 7 String Parameters )
       - **flyway_user:** `root`
-      - **flyway_password:** `Alpha2014_`
+      - **flyway_password:** `<your assigned password`
       - **flyway_driver:** `com.mysql.cj.jdbc.Driver`
       - **flyway_url_prefix:** `jdbc:mysql://`
       - **flyway_schemas:** `AlphaofficeDB`
@@ -343,35 +341,44 @@ We now have an empty database.  We need to populate it with baseline data.  We w
       - **db_port:** `1521`
     - **Source Control:** 
       - check `git` and select the repository `AlphaofficeDB.git`
-    - **Trigger:** 
-      - Check `Based on SCM polling` (leave Schedule field blank)
+    - **Source Control:** 
+      - check `git` and select the repository `AlphaofficeDB.git`
     - **Build Steps:** 
       - Add a build step of type `Execute Shell` and use the following commands...
       ```
-      mvn clean compile -Dflyway.user=${flyway_user} -Dflyway.password=${flyway_password} -Dflyway.url=${flyway_url_prefix}${db_ip}:${db_port}?useSSL=false -Dflyway.driver=${flyway_driver} -Dflyway.schemas=${flyway_schemas} flyway:migrate
-      
-      mvn clean compile -Dflyway.user=${flyway_user} -Dflyway.password=${flyway_password} -Dflyway.url=${flyway_url_prefix}${db_ip}:${db_port}?useSSL=false -Dflyway.driver=${flyway_driver} -Dflyway.schemas=${flyway_schemas}_Dev flyway:migrate
+        mvn clean compile -Dflyway.user=${flyway_user} -Dflyway.password=${flyway_password} -Dflyway.url=${flyway_url_prefix}${db_ip}:${db_port}?useSSL=false -Dflyway.driver=${flyway_driver} -Dflyway.schemas=${flyway_schemas} flyway:migrate
+
       ```
 
-- This is how the Build Step should look:
+- Click **Save** 
 
-    ![](images/200/6.PNG)
+    ![](images/200/5.png)
 
-  - **NOTE:** this actually runs Maven/Flyway twice - once to create the test database AlphaofficeDB, and again to create/simulate a local development database AlphaofficeDB_Dev.
+- Then run the **Build Now**.  This will initialize the 'test' instance.
 
-- Click **Save** and then run the **Build Job** 
+    ![](images/200/6.png)
 
-    ![](images/200/image031.6.png)
-
-- Fill out the parameters (remember to change the **db_ip** to the MySQL public IP) and then press **Build**.  This should take no more than a minute or two.
+- Take the default parameters.  This should take no more than a minute or two.
 
     ![](images/200/7.PNG)
 
+- Run the job again but change the flyway_schemas to be `AlphaofficeDB_Dev`.  This will initialize the dev instance.
+
+    ![](images/200/7.1.png)
+
 - Review the job results:
 
-    ![](images/200/image031.7.png)
+    ![](images/200/7.2.png)
 
-    ![](images/200/image031.8.png)                  
+- scroll to the bottom of log:
+
+    ![](images/200/7.3.png)
+
+- review the results of the second job (AlphaofficeDB_Dev init)
+
+    ![](images/200/7.4.png)
+
+    ![](images/200/7.5.png)
 
 # Apply Changes to MySQL Database Service
 
@@ -487,7 +494,7 @@ In the previous steps we updated the status of the Tasks assign to Roland Dubois
 
 - Select Properties and update the values as follows.  
     - **Database:** `AlphaofficeDB_Dev`
-    - **URL:** `jdbc:mysql:<your MySQL IP>:1521/AlphaofficeDB_Dev`
+    - **URL:** `jdbc:mysql://<your MySQL IP>:1521/AlphaofficeDB_Dev`
     - **User Name:** `root`
     - **Password:** `<your assigned MySQL password>`
 
